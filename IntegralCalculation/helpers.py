@@ -1,7 +1,7 @@
 import numpy as np
 
-def moment(z1, z2, alpha, betta,s=0):
-    deg = max(alpha, betta)
+def moment(z1, z2, alpha, betta, s=0):
+    deg = alpha
     return z2**(s - deg + 1) / (s - deg + 1) - z1**(s - deg + 1) / (s - deg + 1)
 
 def cardano_roots(poly: np.ndarray):

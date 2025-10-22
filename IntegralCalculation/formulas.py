@@ -12,6 +12,9 @@ betta = 0
 def f(x):
     return 3.5 * np.cos(0.7*x) * np.exp(-5*x/3) + 2.4 * np.sin(5.5*x) * np.exp(-3*x/4) + 5
 
+def F(x):
+    return f(x) / (x - a)**alpha
+
 # КФ левого, правого и среднего треугольников
 def rect_qf(a, b, n=10, type='medium'):
     h = (b - a) / n
@@ -43,17 +46,16 @@ def simpson_qf(a, b, n=10):
     return h/3 * (f(a) + f(b) + 4 * np.sum(f(xi[1:])) + 2 * np.sum(f(xi[1:n-1]+h)))
 
 def gauss_qf(a, b, parts=100):
-    t, f_ = a, lambda x: x**alpha*f(x+t)
+    t, f_ = a, lambda x: f(x+t)
     a, b = 0, b - a
 
     h = (b - a) / parts
     n = 3
     I = 0
-
     for i in range(parts):
         z1 = a + i * h
         z2 = a + (i + 1) * h
-
+        
         mu_vec = np.array(([helpers.moment(z1, z2, alpha=alpha, betta=betta, s=j) for j in range(2*n)]))
         mu_mat = np.array([mu_vec[j:j+n] for j in range(n)])
         a_coeffs = np.linalg.solve(mu_mat, -mu_vec[n:]).flatten()
@@ -65,13 +67,13 @@ def gauss_qf(a, b, parts=100):
         A = np.linalg.solve(nodes_mat, mu_vec[:n])
 
         I += A @ f_(nodes)
-    
+
     return I
         
 
 # ньютон-котс
 def newton_cotes_qf(a, b, parts=100):
-    t, f_ = a, lambda x: x**alpha*f(x+t)
+    t, f_ = a, lambda x: f(x+t)
     a, b = 0, b - a
 
     h = (b - a) / parts
